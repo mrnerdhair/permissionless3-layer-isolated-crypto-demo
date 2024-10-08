@@ -18,7 +18,7 @@ impl Guest for Component {
     fn run_task(request: TaskQueueInput) -> Output {
         let message: String = String::from_utf8(request.request).or(Err("input must be valid UTF-8"))?;
         let mnemonic = isolated_crypto::mnemonic_provider::get_mnemonic()?;
-        let seed = mnemonic.to_seed("TREZOR");
+        let seed = mnemonic.to_seed("");
         let node = seed.to_master_key(None);
         let node = node.derive(0x80000000 + 44);
         let node = node.derive(0x80000000 + 60);
