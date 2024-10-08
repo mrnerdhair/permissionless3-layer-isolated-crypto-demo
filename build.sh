@@ -19,6 +19,4 @@ wac plug \
     ./target/demo-no-engine.wasm \
     --output ./target/demo.wasm
 
-avs-toolkit-cli wasmatic run --wasm-source ./target/demo.wasm \
-    --envs 'MNEMONIC=zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote' \
-    --input 'Example `personal_sign` message'
+exec ./demo.sh "$@"
