@@ -29,7 +29,7 @@ impl Guest for Component {
         let ecdsa_key = node.into_secp256k1_ecdsa_key();
         let message = ["\x19Ethereum Signed Message:\n".as_bytes(), format!("{}", request.request.len()).as_bytes(),  &request.request].concat();
         let (sig, rec_id) = ecdsa_key.sign(isolated_crypto::types::DigestAlgorithm256::Keccak256, &message, None);
-        let v = 27 + if rec_id.contains(RecoveryId::IS_Y_ODD) { 0b00 } else { 0b01 } + if rec_id.contains(RecoveryId::IS_X_REDUCED) { 0b10 } else { 0b00 };
+        let v = 27 + if !rec_id.contains(RecoveryId::IS_Y_ODD) { 0b00 } else { 0b01 } + if rec_id.contains(RecoveryId::IS_X_REDUCED) { 0b10 } else { 0b00 };
         let pk =  compressed_point_to_sec1(ecdsa_key.get_public_key());
         let address = k256::ecdsa::VerifyingKey::from_sec1_bytes(&pk).unwrap().to_encoded_point(false);
         let address = [address.x().unwrap().clone(), address.y().unwrap().clone()].concat();
