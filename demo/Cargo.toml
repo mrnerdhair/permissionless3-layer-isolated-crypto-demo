@@ -1,0 +1,26 @@
+[package]
+name = "isolated-crypto-demo"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+hex = "0.4.3"
+k256 = "0.13.4"
+sha3 = "0.10.8"
+wit-bindgen-rt = { version = "0.33.0", features = ["bitflags"] }
+
+[lib]
+crate-type = ["cdylib"]
+
+[profile.release]
+codegen-units = 1
+opt-level = "s"
+debug = false
+strip = true
+lto = true
+
+[package.metadata.component]
+package = "component:isolated-crypto-demo"
+target = "mrnerdhair:isolated-crypto-demo/demo@0.14.0"
+
+[package.metadata.component.dependencies]

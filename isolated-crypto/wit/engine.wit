@@ -1,0 +1,88 @@
+package mrnerdhair:isolated-crypto@0.14.0;
+
+interface types {
+    /// Big-endian 256-bit integer. Will be enforced by type once WebAssembly/component-model#384 percolates through the tooling.
+    /// In the meantime, expect a trap if you pass in a list of the wrong length.
+    type u256be = list<u8/*, 32*/>;
+
+    enum digest-algorithm256 {
+        sha256,
+        keccak256,
+    }
+}
+
+interface secp256k1 {
+    use types.{u256be, digest-algorithm256};
+
+    record compressed-point {
+        x: u256be,
+        is-y-odd: bool,
+    }
+
+    flags recovery-id {
+        is-y-odd,
+        is-x-reduced,
+    }
+
+    record signature {
+        r: u256be,
+        s: u256be,
+    }
+
+    resource ecdsa-key {
+        get-public-key: func() -> compressed-point;
+        sign: func(digest-algorithm: digest-algorithm256, message: list<u8>, counter: option<u32>) -> tuple<signature, recovery-id>;
+        sign-raw: func(digest: u256be, counter: option<u32>) -> tuple<signature, recovery-id>;
+    }
+}
+
+interface bip32 {
+    use types.{u256be};
+    use secp256k1.{compressed-point, ecdsa-key};
+
+    resource seed {
+        to-master-key: func(hmac-key: option<list<u8>>) -> node;
+    }
+
+    resource node {
+        get-public-key: func() -> compressed-point;
+        get-chain-code: func() -> u256be;
+        derive: func(index: u32) -> node;
+        clone: func() -> node;
+        into-secp256k1-ecdsa-key: func() -> ecdsa-key;
+    }
+}
+
+interface bip39 {
+    use bip32.{seed};
+
+    resource mnemonic {
+        new: static func(mnemonic: string) -> result<mnemonic, string>;
+        to-seed: func(passphrase: string) -> seed;
+    }
+}
+
+interface mnemonic-provider {
+    use bip39.{mnemonic};
+    get-mnemonic: func() -> result<mnemonic, string>;
+}
+
+interface root-node-provider {
+    use bip32.{node};
+    get-root-node: func() -> result<node, string>;
+}
+
+world engine {
+    export types;
+    export secp256k1;
+    export bip32;
+    export bip39;
+}
+
+world mnemonic-provider-world {
+    export mnemonic-provider;
+}
+
+world root-node-provider-world {
+    export root-node-provider;
+}
