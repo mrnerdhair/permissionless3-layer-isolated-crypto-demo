@@ -1,3 +1,5 @@
+![logo](./logo.png)
+
 # WASM Isolated Crypto Component
 
 Layer is a system which enables developers to build their own lightweight AVS. Developers build WASM components using their language of choice and can deploy them to run on-chain, where they are run by a set of operators. WebAssembly components are exciting because they can be composed with strong isolation guarantees between components, which enables a practical capability-based security model.
