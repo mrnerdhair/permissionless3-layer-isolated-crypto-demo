@@ -6,4 +6,4 @@ wkg wit build --output ./target/wit.wasm
 wkg publish ./target/wit.wasm || true
 
 cargo clean
-cargo component build
+cargo component build --release

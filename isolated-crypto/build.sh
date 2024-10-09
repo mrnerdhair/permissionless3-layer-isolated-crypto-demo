@@ -7,10 +7,10 @@ wkg publish ./target/wit.wasm || true
 
 pushd engine
 cargo clean
-cargo component build
+cargo component build --release
 popd
 
 pushd provider
 cargo clean
-cargo component build
+cargo component build --release
 popd
