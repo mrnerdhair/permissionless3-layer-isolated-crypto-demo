@@ -1,6 +1,8 @@
 #[allow(warnings)]
 mod bindings;
 
+use layer_wasi::{block_on, Reactor, Request, WasiPollable};
+
 use crate::bindings::mrnerdhair::isolated_crypto;
 use crate::bindings::{Guest, Output, TaskQueueInput};
 
@@ -10,13 +12,66 @@ use sha3::{Digest, Keccak256};
 
 struct Component;
 
+use serde::Deserialize;
+
+#[derive(Deserialize, Debug)]
+pub struct EtherscanVerifyMessageSignatureResponseInner {
+    #[serde(rename = "verifiedMessageLocation")]
+    pub verified_message_location: String,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct EtherscanVerifyMessageSignatureResponse {
+    pub d: EtherscanVerifyMessageSignatureResponseInner,
+}
+
 fn compressed_point_to_sec1(value: CompressedPoint) -> [u8; 33] {
-    [[if !value.is_y_odd { 0x02u8 } else { 0x03u8 }].as_slice(), &value.x].concat().try_into().unwrap()
+    [
+        [if !value.is_y_odd { 0x02u8 } else { 0x03u8 }].as_slice(),
+        &value.x,
+    ]
+    .concat()
+    .try_into()
+    .unwrap()
+}
+
+async fn verify_on_etherscan(
+    reactor: &Reactor,
+    address: [u8; 20],
+    sig: [u8; 65],
+    message: String,
+) -> Output {
+    let req_body = format!(
+        r#"{{"address":"0x{}","messageSignature":"0x{}","messageRaw":"{}","saveOption":"1"}}"#,
+        hex::encode(address),
+        hex::encode(sig),
+        &message
+    );
+
+    let mut req =
+        Request::post("https://etherscan.io/verifiedSignatures.aspx/VerifyMessageSignature")?;
+    req.headers = vec![("Content-Type".to_string(), "application/json".to_string())];
+    req.body = req_body.into_bytes();
+    let res = reactor.send(req).await?;
+
+    match res.status {
+        200 => res
+            .json::<EtherscanVerifyMessageSignatureResponse>()
+            .map(|info| format!("https://etherscan.io/{}", &info.d.verified_message_location[1..]).into_bytes()),
+        status => Err(format!("unexpected status code: {status}")),
+    }
 }
 
 impl Guest for Component {
-    fn run_task(request: TaskQueueInput) -> Output {
-        let message: String = String::from_utf8(request.request).or(Err("input must be valid UTF-8"))?;
+    fn run_task(input: TaskQueueInput) -> Output {
+        block_on(|reactor: Reactor| async { Self::run(reactor, input).await })
+    }
+}
+
+impl Component {
+    pub async fn run(reactor: Reactor, input: TaskQueueInput) -> Output {
+        let message: String =
+            String::from_utf8(input.request).or(Err("input must be valid UTF-8"))?;
         let mnemonic = isolated_crypto::mnemonic_provider::get_mnemonic()?;
         let seed = mnemonic.to_seed("");
         let node = seed.to_master_key(None);
@@ -26,15 +81,37 @@ impl Guest for Component {
         let node = node.derive(0);
         let node = node.derive(0);
         let ecdsa_key = node.into_secp256k1_ecdsa_key();
-        let sign_bytes = ["\x19Ethereum Signed Message:\n".as_bytes(), format!("{}", message.len()).as_bytes(),  &message.as_bytes()].concat();
-        let (sig, rec_id) = ecdsa_key.sign(isolated_crypto::types::DigestAlgorithm256::Keccak256, &sign_bytes, None);
-        let v = 27 + if !rec_id.contains(RecoveryId::IS_Y_ODD) { 0b00 } else { 0b01 } + if rec_id.contains(RecoveryId::IS_X_REDUCED) { 0b10 } else { 0b00 };
-        let pk =  compressed_point_to_sec1(ecdsa_key.get_public_key());
-        let address = k256::ecdsa::VerifyingKey::from_sec1_bytes(&pk).unwrap().to_encoded_point(false);
+        let sign_bytes = [
+            "\x19Ethereum Signed Message:\n".as_bytes(),
+            format!("{}", message.len()).as_bytes(),
+            &message.as_bytes(),
+        ]
+        .concat();
+        let (sig, rec_id) = ecdsa_key.sign(
+            isolated_crypto::types::DigestAlgorithm256::Keccak256,
+            &sign_bytes,
+            None,
+        );
+        let v: u8 =
+            27 + if !rec_id.contains(RecoveryId::IS_Y_ODD) {
+                0b00
+            } else {
+                0b01
+            } + if rec_id.contains(RecoveryId::IS_X_REDUCED) {
+                0b10
+            } else {
+                0b00
+            };
+        let pk = compressed_point_to_sec1(ecdsa_key.get_public_key());
+        let address = k256::ecdsa::VerifyingKey::from_sec1_bytes(&pk)
+            .unwrap()
+            .to_encoded_point(false);
         let address = [address.x().unwrap().clone(), address.y().unwrap().clone()].concat();
         let address = Keccak256::digest(address.clone());
-        let address = &address[12..32];
-        Ok(format!(r#"{{"address": "0x{}", "msg": "{}", "sig": "0x{}{}{:02x}"}}"#, hex::encode(address), &message, hex::encode(sig.r), hex::encode(sig.s), v).into())
+        let address: [u8; 20] = address[12..32].try_into().unwrap();
+        let sig: [u8; 65] = [sig.r, sig.s, [v].to_vec()].concat().try_into().unwrap();
+
+        verify_on_etherscan(&reactor, address, sig, message).await
     }
 }
 
