@@ -3,7 +3,7 @@ mod bindings;
 
 use layer_wasi::{block_on, Reactor, Request, WasiPollable};
 
-use crate::bindings::mrnerdhair::isolated_crypto;
+use crate::bindings::mrnerdhair::isolated_crypto::{self, bip39::Mnemonic, secp256k1::EcdsaKey};
 use crate::bindings::{Guest, Output, TaskQueueInput};
 
 use isolated_crypto::bip32::CompressedPoint;
@@ -57,9 +57,68 @@ async fn verify_on_etherscan(
     match res.status {
         200 => res
             .json::<EtherscanVerifyMessageSignatureResponse>()
-            .map(|info| format!("https://etherscan.io/{}", &info.d.verified_message_location[1..]).into_bytes()),
+            .map(|info| {
+                format!(
+                    "https://etherscan.io/{}",
+                    &info.d.verified_message_location[1..]
+                )
+                .into_bytes()
+            }),
         status => Err(format!("unexpected status code: {status}")),
     }
+}
+
+fn get_ethereum_key(mnemonic: &Mnemonic) -> EcdsaKey {
+    let seed = mnemonic.to_seed("");
+    let node = seed.to_master_key(None);
+    let node = node.derive(0x80000000 + 44);
+    let node = node.derive(0x80000000 + 60);
+    let node = node.derive(0x80000000 + 0);
+    let node = node.derive(0);
+    let node = node.derive(0);
+
+    node.into_secp256k1_ecdsa_key()
+}
+
+fn get_address(mnemonic: &Mnemonic) -> [u8; 20] {
+    let ecdsa_key = get_ethereum_key(mnemonic);
+    let pk = compressed_point_to_sec1(ecdsa_key.get_public_key());
+    let address = k256::ecdsa::VerifyingKey::from_sec1_bytes(&pk)
+        .unwrap()
+        .to_encoded_point(false);
+    let address = [address.x().unwrap().clone(), address.y().unwrap().clone()].concat();
+    let address = Keccak256::digest(address.clone());
+    let address: [u8; 20] = address[12..32].try_into().unwrap();
+
+    address
+}
+
+fn personal_sign(mnemonic: &Mnemonic, message: &[u8]) -> [u8; 65] {
+    let ecdsa_key = get_ethereum_key(mnemonic);
+    let sign_bytes = [
+        "\x19Ethereum Signed Message:\n".as_bytes(),
+        format!("{}", message.len()).as_bytes(),
+        &message,
+    ]
+    .concat();
+    let (sig, rec_id) = ecdsa_key.sign(
+        isolated_crypto::types::DigestAlgorithm256::Keccak256,
+        &sign_bytes,
+        None,
+    );
+    let v: u8 =
+        27 + if !rec_id.contains(RecoveryId::IS_Y_ODD) {
+            0b00
+        } else {
+            0b01
+        } + if rec_id.contains(RecoveryId::IS_X_REDUCED) {
+            0b10
+        } else {
+            0b00
+        };
+    let sig: [u8; 65] = [sig.r, sig.s, [v].to_vec()].concat().try_into().unwrap();
+
+    sig
 }
 
 impl Guest for Component {
@@ -73,44 +132,9 @@ impl Component {
         let message: String =
             String::from_utf8(input.request).or(Err("input must be valid UTF-8"))?;
         let mnemonic = isolated_crypto::mnemonic_provider::get_mnemonic()?;
-        let seed = mnemonic.to_seed("");
-        let node = seed.to_master_key(None);
-        let node = node.derive(0x80000000 + 44);
-        let node = node.derive(0x80000000 + 60);
-        let node = node.derive(0x80000000 + 0);
-        let node = node.derive(0);
-        let node = node.derive(0);
-        let ecdsa_key = node.into_secp256k1_ecdsa_key();
-        let sign_bytes = [
-            "\x19Ethereum Signed Message:\n".as_bytes(),
-            format!("{}", message.len()).as_bytes(),
-            &message.as_bytes(),
-        ]
-        .concat();
-        let (sig, rec_id) = ecdsa_key.sign(
-            isolated_crypto::types::DigestAlgorithm256::Keccak256,
-            &sign_bytes,
-            None,
-        );
-        let v: u8 =
-            27 + if !rec_id.contains(RecoveryId::IS_Y_ODD) {
-                0b00
-            } else {
-                0b01
-            } + if rec_id.contains(RecoveryId::IS_X_REDUCED) {
-                0b10
-            } else {
-                0b00
-            };
-        let pk = compressed_point_to_sec1(ecdsa_key.get_public_key());
-        let address = k256::ecdsa::VerifyingKey::from_sec1_bytes(&pk)
-            .unwrap()
-            .to_encoded_point(false);
-        let address = [address.x().unwrap().clone(), address.y().unwrap().clone()].concat();
-        let address = Keccak256::digest(address.clone());
-        let address: [u8; 20] = address[12..32].try_into().unwrap();
-        let sig: [u8; 65] = [sig.r, sig.s, [v].to_vec()].concat().try_into().unwrap();
 
+        let address = get_address(&mnemonic);
+        let sig = personal_sign(&mnemonic, message.as_bytes());
         verify_on_etherscan(&reactor, address, sig, message).await
     }
 }
