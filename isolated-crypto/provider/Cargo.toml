@@ -4,20 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-wit-bindgen-rt = { version = "0.33.0", features = ["bitflags"] }
+wit-bindgen-rt = { workspace = true }
 
 [lib]
 crate-type = ["cdylib"]
 
-[profile.release]
-codegen-units = 1
-opt-level = "s"
-debug = false
-strip = true
-lto = true
-
 [package.metadata.component]
 package = "component:isolated-crypto-provider"
-target = "mrnerdhair:isolated-crypto/mnemonic-provider-world@0.14.0"
+target = { path = "../wit/engine.wit", world = "mnemonic-provider-world" }
 
 [package.metadata.component.dependencies]

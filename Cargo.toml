@@ -1,0 +1,26 @@
+[profile.release]
+codegen-units = 1
+opt-level = "s"
+debug = false
+strip = true
+lto = true
+
+[workspace]
+resolver = "2"
+members = [
+    "demo",
+    "isolated-crypto/engine",
+    "isolated-crypto/provider",
+]
+
+[workspace.dependencies]
+wit-bindgen-rt = { version = "0.33.0", features = ["bitflags"] }
+hex = "0.4.3"
+k256 = "0.13.4"
+layer-wasi = { git = "https://github.com/Lay3rLabs/avs-toolkit", version = "0.1.1" }
+serde = "1.0.210"
+sha3 = "0.10.8"
+bip32 = "0.5.2"
+rfc6979 = "0.4.0"
+sha2 = "0.10.8"
+typenum = "1.17.0"

@@ -1,4 +1,4 @@
-use crate::bindings::exports::mrnerdhair::isolated_crypto;
+use crate::bindings::exports::component::isolated_crypto;
 
 use bip32::XPrv;
 use isolated_crypto::bip32::{Guest, GuestNode, GuestSeed};

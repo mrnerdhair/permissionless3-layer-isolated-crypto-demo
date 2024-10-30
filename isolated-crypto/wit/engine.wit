@@ -1,4 +1,4 @@
-package mrnerdhair:isolated-crypto@0.14.0;
+package component:isolated-crypto;
 
 interface types {
     /// Big-endian 256-bit integer. Will be enforced by type once WebAssembly/component-model#384 percolates through the tooling.

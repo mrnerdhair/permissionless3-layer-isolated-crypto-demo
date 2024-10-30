@@ -1,6 +1,6 @@
-package mrnerdhair:isolated-crypto-demo@0.14.0;
+package component:isolated-crypto-demo;
 
 world demo {
     include lay3r:avs/task-queue@0.3.0;
-    import mrnerdhair:isolated-crypto/mnemonic-provider@0.14.0;
+    import component:isolated-crypto/mnemonic-provider;
 }

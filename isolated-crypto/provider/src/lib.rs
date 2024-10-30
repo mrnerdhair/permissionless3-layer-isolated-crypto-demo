@@ -1,7 +1,7 @@
 #[allow(warnings)]
 mod bindings;
 
-use bindings::exports::mrnerdhair::isolated_crypto;
+use bindings::exports::component::isolated_crypto;
 
 use isolated_crypto::mnemonic_provider::{Guest, Mnemonic};
 

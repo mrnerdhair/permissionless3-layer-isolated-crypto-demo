@@ -21,18 +21,9 @@ An implementation of an software-backed isolated crypto engine is also provided,
 - wkg
 - avs-toolkit-cli
 
-## Notes on linking with `wkg`
-
-You must bump the version strings on all `.wit` files and in the corresponding `package.metadata.component.target` sections of each `Cargo.toml` file whenever changes are made to the WIT interfaces.
-
-Due to `wkg`'s currently limited support for local paths, you will need to have a default registry set for `wkg` and associated credentials which allow publishing to the `mrnerdhair:isolated-crypto` and `mrnerdhair:isolated-crypto-demo` namespaces. You will probably not have these credentials. Unfortunately, this means you'll need to replace the `mrnerdhair` namespace with your own in quite a few files to perform a successful build. 
-
-To mitigate this, this repo currently includes committed intermediate build products.
-
 ## Running the Demo
 
 ```sh
-./build.sh  # Skip this step if you don't happen to have my personal keys! The committed intermediate build products will suffice for the demo.
 ./demo.sh   # Signs with the default mnemonic and message
 MNEMONIC="..." ./demo.sh "Your Message Here"    # Signs with other values; you must use a 24-word, English BIP39 mnemonic.
 ```

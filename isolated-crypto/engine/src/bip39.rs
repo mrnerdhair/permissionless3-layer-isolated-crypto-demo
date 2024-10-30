@@ -1,4 +1,4 @@
-use crate::bindings::exports::mrnerdhair::isolated_crypto;
+use crate::bindings::exports::component::isolated_crypto;
 
 use super::bip32::Seed;
 use isolated_crypto::bip39::{Guest, GuestMnemonic};

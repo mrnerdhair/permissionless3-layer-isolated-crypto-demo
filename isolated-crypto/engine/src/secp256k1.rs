@@ -1,4 +1,4 @@
-use crate::bindings::exports::mrnerdhair::isolated_crypto;
+use crate::bindings::exports::component::isolated_crypto;
 
 use isolated_crypto::{
     secp256k1::{Guest, CompressedPoint, GuestEcdsaKey, RecoveryId, Signature},

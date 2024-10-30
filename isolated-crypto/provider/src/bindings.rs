@@ -1,5 +1,5 @@
 #[allow(dead_code)]
-pub mod mrnerdhair {
+pub mod component {
     #[allow(dead_code)]
     pub mod isolated_crypto {
         #[allow(dead_code, clippy::all)]
@@ -12,7 +12,7 @@ pub mod mrnerdhair {
             /// In the meantime, expect a trap if you pass in a list of the wrong length.
             pub type U256be = _rt::Vec<u8>;
             #[repr(u8)]
-            #[derive(Clone, Copy, Eq, PartialEq)]
+            #[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
             pub enum DigestAlgorithm256 {
                 Sha256,
                 Keccak256,
@@ -52,8 +52,8 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type U256be = super::super::super::mrnerdhair::isolated_crypto::types::U256be;
-            pub type DigestAlgorithm256 = super::super::super::mrnerdhair::isolated_crypto::types::DigestAlgorithm256;
+            pub type U256be = super::super::super::component::isolated_crypto::types::U256be;
+            pub type DigestAlgorithm256 = super::super::super::component::isolated_crypto::types::DigestAlgorithm256;
             #[derive(Clone)]
             pub struct CompressedPoint {
                 pub x: U256be,
@@ -120,7 +120,7 @@ pub mod mrnerdhair {
                     #[cfg(target_arch = "wasm32")]
                     {
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[resource-drop]ecdsa-key"]
@@ -142,7 +142,7 @@ pub mod mrnerdhair {
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[method]ecdsa-key.get-public-key"]
@@ -188,7 +188,7 @@ pub mod mrnerdhair {
                         let ptr2 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[method]ecdsa-key.sign"]
@@ -264,7 +264,7 @@ pub mod mrnerdhair {
                         let ptr2 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[method]ecdsa-key.sign-raw"]
@@ -321,9 +321,9 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type U256be = super::super::super::mrnerdhair::isolated_crypto::types::U256be;
-            pub type CompressedPoint = super::super::super::mrnerdhair::isolated_crypto::secp256k1::CompressedPoint;
-            pub type EcdsaKey = super::super::super::mrnerdhair::isolated_crypto::secp256k1::EcdsaKey;
+            pub type U256be = super::super::super::component::isolated_crypto::types::U256be;
+            pub type CompressedPoint = super::super::super::component::isolated_crypto::secp256k1::CompressedPoint;
+            pub type EcdsaKey = super::super::super::component::isolated_crypto::secp256k1::EcdsaKey;
             #[derive(Debug)]
             #[repr(transparent)]
             pub struct Seed {
@@ -352,9 +352,7 @@ pub mod mrnerdhair {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[resource-drop]seed"]
                             fn drop(_: u32);
@@ -391,9 +389,7 @@ pub mod mrnerdhair {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[resource-drop]node"]
                             fn drop(_: u32);
@@ -416,9 +412,7 @@ pub mod mrnerdhair {
                             None => (0i32, ::core::ptr::null_mut(), 0usize),
                         };
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]seed.to-master-key"]
                             fn wit_import(_: i32, _: i32, _: *mut u8, _: usize) -> i32;
@@ -448,9 +442,7 @@ pub mod mrnerdhair {
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.get-public-key"]
                             fn wit_import(_: i32, _: *mut u8);
@@ -464,7 +456,7 @@ pub mod mrnerdhair {
                         let l2 = *ptr0.add(4).cast::<usize>();
                         let len3 = l2;
                         let l4 = i32::from(*ptr0.add(8).cast::<u8>());
-                        super::super::super::mrnerdhair::isolated_crypto::secp256k1::CompressedPoint {
+                        super::super::super::component::isolated_crypto::secp256k1::CompressedPoint {
                             x: _rt::Vec::from_raw_parts(l1.cast(), len3, len3),
                             is_y_odd: _rt::bool_lift(l4 as u8),
                         }
@@ -482,9 +474,7 @@ pub mod mrnerdhair {
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.get-chain-code"]
                             fn wit_import(_: i32, _: *mut u8);
@@ -506,9 +496,7 @@ pub mod mrnerdhair {
                 pub fn derive(&self, index: u32) -> Node {
                     unsafe {
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.derive"]
                             fn wit_import(_: i32, _: i32) -> i32;
@@ -530,9 +518,7 @@ pub mod mrnerdhair {
                 pub fn clone(&self) -> Node {
                     unsafe {
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.clone"]
                             fn wit_import(_: i32) -> i32;
@@ -551,9 +537,7 @@ pub mod mrnerdhair {
                 pub fn into_secp256k1_ecdsa_key(&self) -> EcdsaKey {
                     unsafe {
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.into-secp256k1-ecdsa-key"]
                             fn wit_import(_: i32) -> i32;
@@ -563,7 +547,7 @@ pub mod mrnerdhair {
                             unreachable!()
                         }
                         let ret = wit_import((self).handle() as i32);
-                        super::super::super::mrnerdhair::isolated_crypto::secp256k1::EcdsaKey::from_handle(
+                        super::super::super::component::isolated_crypto::secp256k1::EcdsaKey::from_handle(
                             ret as u32,
                         )
                     }
@@ -576,7 +560,7 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type Seed = super::super::super::mrnerdhair::isolated_crypto::bip32::Seed;
+            pub type Seed = super::super::super::component::isolated_crypto::bip32::Seed;
             #[derive(Debug)]
             #[repr(transparent)]
             pub struct Mnemonic {
@@ -605,9 +589,7 @@ pub mod mrnerdhair {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip39@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip39")]
                         extern "C" {
                             #[link_name = "[resource-drop]mnemonic"]
                             fn drop(_: u32);
@@ -630,9 +612,7 @@ pub mod mrnerdhair {
                         let len0 = vec0.len();
                         let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip39@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip39")]
                         extern "C" {
                             #[link_name = "[static]mnemonic.new"]
                             fn wit_import(_: *mut u8, _: usize, _: *mut u8);
@@ -678,9 +658,7 @@ pub mod mrnerdhair {
                         let ptr0 = vec0.as_ptr().cast::<u8>();
                         let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip39@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip39")]
                         extern "C" {
                             #[link_name = "[method]mnemonic.to-seed"]
                             fn wit_import(_: i32, _: *mut u8, _: usize) -> i32;
@@ -694,7 +672,7 @@ pub mod mrnerdhair {
                             ptr0.cast_mut(),
                             len0,
                         );
-                        super::super::super::mrnerdhair::isolated_crypto::bip32::Seed::from_handle(
+                        super::super::super::component::isolated_crypto::bip32::Seed::from_handle(
                             ret as u32,
                         )
                     }
@@ -706,7 +684,7 @@ pub mod mrnerdhair {
 #[allow(dead_code)]
 pub mod exports {
     #[allow(dead_code)]
-    pub mod mrnerdhair {
+    pub mod component {
         #[allow(dead_code)]
         pub mod isolated_crypto {
             #[allow(dead_code, clippy::all)]
@@ -715,7 +693,7 @@ pub mod exports {
                 #[doc(hidden)]
                 static __FORCE_SECTION_REF: fn() = super::super::super::super::__link_custom_section_describing_imports;
                 use super::super::super::super::_rt;
-                pub type Mnemonic = super::super::super::super::mrnerdhair::isolated_crypto::bip39::Mnemonic;
+                pub type Mnemonic = super::super::super::super::component::isolated_crypto::bip39::Mnemonic;
                 #[doc(hidden)]
                 #[allow(non_snake_case)]
                 pub unsafe fn _export_get_mnemonic_cabi<T: Guest>() -> *mut u8 {
@@ -756,21 +734,21 @@ pub mod exports {
                     fn get_mnemonic() -> Result<Mnemonic, _rt::String>;
                 }
                 #[doc(hidden)]
-                macro_rules! __export_mrnerdhair_isolated_crypto_mnemonic_provider_0_14_0_cabi {
+                macro_rules! __export_component_isolated_crypto_mnemonic_provider_cabi {
                     ($ty:ident with_types_in $($path_to_types:tt)*) => {
                         const _ : () = { #[export_name =
-                        "mrnerdhair:isolated-crypto/mnemonic-provider@0.14.0#get-mnemonic"]
+                        "component:isolated-crypto/mnemonic-provider#get-mnemonic"]
                         unsafe extern "C" fn export_get_mnemonic() -> * mut u8 {
                         $($path_to_types)*:: _export_get_mnemonic_cabi::<$ty > () }
                         #[export_name =
-                        "cabi_post_mrnerdhair:isolated-crypto/mnemonic-provider@0.14.0#get-mnemonic"]
+                        "cabi_post_component:isolated-crypto/mnemonic-provider#get-mnemonic"]
                         unsafe extern "C" fn _post_return_get_mnemonic(arg0 : * mut u8,)
                         { $($path_to_types)*:: __post_return_get_mnemonic::<$ty > (arg0)
                         } };
                     };
                 }
                 #[doc(hidden)]
-                pub(crate) use __export_mrnerdhair_isolated_crypto_mnemonic_provider_0_14_0_cabi;
+                pub(crate) use __export_component_isolated_crypto_mnemonic_provider_cabi;
                 #[repr(align(4))]
                 struct _RetArea([::core::mem::MaybeUninit<u8>; 12]);
                 static mut _RET_AREA: _RetArea = _RetArea(
@@ -979,50 +957,50 @@ macro_rules! __export_mnemonic_provider_world_impl {
     };
     ($ty:ident with_types_in $($path_to_types_root:tt)*) => {
         $($path_to_types_root)*::
-        exports::mrnerdhair::isolated_crypto::mnemonic_provider::__export_mrnerdhair_isolated_crypto_mnemonic_provider_0_14_0_cabi!($ty
+        exports::component::isolated_crypto::mnemonic_provider::__export_component_isolated_crypto_mnemonic_provider_cabi!($ty
         with_types_in $($path_to_types_root)*::
-        exports::mrnerdhair::isolated_crypto::mnemonic_provider);
+        exports::component::isolated_crypto::mnemonic_provider);
     };
 }
 #[doc(inline)]
 pub(crate) use __export_mnemonic_provider_world_impl as export;
 #[cfg(target_arch = "wasm32")]
-#[link_section = "component-type:wit-bindgen:0.30.0:mnemonic-provider-world:encoded world"]
+#[link_section = "component-type:wit-bindgen:0.31.0:component:isolated-crypto:mnemonic-provider-world:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1525] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xe7\x0a\x01A\x02\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 1477] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb7\x0a\x01A\x02\x01\
 A\x10\x01B\x04\x01p}\x04\0\x06u256be\x03\0\0\x01m\x02\x06sha256\x09keccak256\x04\
-\0\x13digest-algorithm256\x03\0\x02\x03\x01'mrnerdhair:isolated-crypto/types@0.1\
-4.0\x05\0\x02\x03\0\0\x06u256be\x02\x03\0\0\x13digest-algorithm256\x01B\x15\x02\x03\
-\x02\x01\x01\x04\0\x06u256be\x03\0\0\x02\x03\x02\x01\x02\x04\0\x13digest-algorit\
-hm256\x03\0\x02\x01r\x02\x01x\x01\x08is-y-odd\x7f\x04\0\x10compressed-point\x03\0\
-\x04\x01n\x02\x08is-y-odd\x0cis-x-reduced\x04\0\x0brecovery-id\x03\0\x06\x01r\x02\
-\x01r\x01\x01s\x01\x04\0\x09signature\x03\0\x08\x04\0\x09ecdsa-key\x03\x01\x01h\x0a\
-\x01@\x01\x04self\x0b\0\x05\x04\0\x20[method]ecdsa-key.get-public-key\x01\x0c\x01\
-p}\x01ky\x01o\x02\x09\x07\x01@\x04\x04self\x0b\x10digest-algorithm\x03\x07messag\
-e\x0d\x07counter\x0e\0\x0f\x04\0\x16[method]ecdsa-key.sign\x01\x10\x01@\x03\x04s\
-elf\x0b\x06digest\x01\x07counter\x0e\0\x0f\x04\0\x1a[method]ecdsa-key.sign-raw\x01\
-\x11\x03\x01+mrnerdhair:isolated-crypto/secp256k1@0.14.0\x05\x03\x02\x03\0\x01\x10\
-compressed-point\x02\x03\0\x01\x09ecdsa-key\x01B\x1a\x02\x03\x02\x01\x01\x04\0\x06\
-u256be\x03\0\0\x02\x03\x02\x01\x04\x04\0\x10compressed-point\x03\0\x02\x02\x03\x02\
-\x01\x05\x04\0\x09ecdsa-key\x03\0\x04\x04\0\x04seed\x03\x01\x04\0\x04node\x03\x01\
-\x01h\x06\x01p}\x01k\x09\x01i\x07\x01@\x02\x04self\x08\x08hmac-key\x0a\0\x0b\x04\
-\0\x1a[method]seed.to-master-key\x01\x0c\x01h\x07\x01@\x01\x04self\x0d\0\x03\x04\
-\0\x1b[method]node.get-public-key\x01\x0e\x01@\x01\x04self\x0d\0\x01\x04\0\x1b[m\
-ethod]node.get-chain-code\x01\x0f\x01@\x02\x04self\x0d\x05indexy\0\x0b\x04\0\x13\
-[method]node.derive\x01\x10\x01@\x01\x04self\x0d\0\x0b\x04\0\x12[method]node.clo\
-ne\x01\x11\x01i\x05\x01@\x01\x04self\x0d\0\x12\x04\0%[method]node.into-secp256k1\
--ecdsa-key\x01\x13\x03\x01'mrnerdhair:isolated-crypto/bip32@0.14.0\x05\x06\x02\x03\
-\0\x02\x04seed\x01B\x0b\x02\x03\x02\x01\x07\x04\0\x04seed\x03\0\0\x04\0\x08mnemo\
-nic\x03\x01\x01i\x02\x01j\x01\x03\x01s\x01@\x01\x08mnemonics\0\x04\x04\0\x14[sta\
-tic]mnemonic.new\x01\x05\x01h\x02\x01i\x01\x01@\x02\x04self\x06\x0apassphrases\0\
-\x07\x04\0\x18[method]mnemonic.to-seed\x01\x08\x03\x01'mrnerdhair:isolated-crypt\
-o/bip39@0.14.0\x05\x08\x02\x03\0\x03\x08mnemonic\x01B\x06\x02\x03\x02\x01\x09\x04\
-\0\x08mnemonic\x03\0\0\x01i\x01\x01j\x01\x02\x01s\x01@\0\0\x03\x04\0\x0cget-mnem\
-onic\x01\x04\x04\x013mrnerdhair:isolated-crypto/mnemonic-provider@0.14.0\x05\x0a\
-\x04\x019mrnerdhair:isolated-crypto/mnemonic-provider-world@0.14.0\x04\0\x0b\x1d\
-\x01\0\x17mnemonic-provider-world\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\
-\x0dwit-component\x070.215.0\x10wit-bindgen-rust\x060.30.0";
+\0\x13digest-algorithm256\x03\0\x02\x03\x01\x1fcomponent:isolated-crypto/types\x05\
+\0\x02\x03\0\0\x06u256be\x02\x03\0\0\x13digest-algorithm256\x01B\x15\x02\x03\x02\
+\x01\x01\x04\0\x06u256be\x03\0\0\x02\x03\x02\x01\x02\x04\0\x13digest-algorithm25\
+6\x03\0\x02\x01r\x02\x01x\x01\x08is-y-odd\x7f\x04\0\x10compressed-point\x03\0\x04\
+\x01n\x02\x08is-y-odd\x0cis-x-reduced\x04\0\x0brecovery-id\x03\0\x06\x01r\x02\x01\
+r\x01\x01s\x01\x04\0\x09signature\x03\0\x08\x04\0\x09ecdsa-key\x03\x01\x01h\x0a\x01\
+@\x01\x04self\x0b\0\x05\x04\0\x20[method]ecdsa-key.get-public-key\x01\x0c\x01p}\x01\
+ky\x01o\x02\x09\x07\x01@\x04\x04self\x0b\x10digest-algorithm\x03\x07message\x0d\x07\
+counter\x0e\0\x0f\x04\0\x16[method]ecdsa-key.sign\x01\x10\x01@\x03\x04self\x0b\x06\
+digest\x01\x07counter\x0e\0\x0f\x04\0\x1a[method]ecdsa-key.sign-raw\x01\x11\x03\x01\
+#component:isolated-crypto/secp256k1\x05\x03\x02\x03\0\x01\x10compressed-point\x02\
+\x03\0\x01\x09ecdsa-key\x01B\x1a\x02\x03\x02\x01\x01\x04\0\x06u256be\x03\0\0\x02\
+\x03\x02\x01\x04\x04\0\x10compressed-point\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x09\
+ecdsa-key\x03\0\x04\x04\0\x04seed\x03\x01\x04\0\x04node\x03\x01\x01h\x06\x01p}\x01\
+k\x09\x01i\x07\x01@\x02\x04self\x08\x08hmac-key\x0a\0\x0b\x04\0\x1a[method]seed.\
+to-master-key\x01\x0c\x01h\x07\x01@\x01\x04self\x0d\0\x03\x04\0\x1b[method]node.\
+get-public-key\x01\x0e\x01@\x01\x04self\x0d\0\x01\x04\0\x1b[method]node.get-chai\
+n-code\x01\x0f\x01@\x02\x04self\x0d\x05indexy\0\x0b\x04\0\x13[method]node.derive\
+\x01\x10\x01@\x01\x04self\x0d\0\x0b\x04\0\x12[method]node.clone\x01\x11\x01i\x05\
+\x01@\x01\x04self\x0d\0\x12\x04\0%[method]node.into-secp256k1-ecdsa-key\x01\x13\x03\
+\x01\x1fcomponent:isolated-crypto/bip32\x05\x06\x02\x03\0\x02\x04seed\x01B\x0b\x02\
+\x03\x02\x01\x07\x04\0\x04seed\x03\0\0\x04\0\x08mnemonic\x03\x01\x01i\x02\x01j\x01\
+\x03\x01s\x01@\x01\x08mnemonics\0\x04\x04\0\x14[static]mnemonic.new\x01\x05\x01h\
+\x02\x01i\x01\x01@\x02\x04self\x06\x0apassphrases\0\x07\x04\0\x18[method]mnemoni\
+c.to-seed\x01\x08\x03\x01\x1fcomponent:isolated-crypto/bip39\x05\x08\x02\x03\0\x03\
+\x08mnemonic\x01B\x06\x02\x03\x02\x01\x09\x04\0\x08mnemonic\x03\0\0\x01i\x01\x01\
+j\x01\x02\x01s\x01@\0\0\x03\x04\0\x0cget-mnemonic\x01\x04\x04\x01+component:isol\
+ated-crypto/mnemonic-provider\x05\x0a\x04\x011component:isolated-crypto/mnemonic\
+-provider-world\x04\0\x0b\x1d\x01\0\x17mnemonic-provider-world\x03\0\0\0G\x09pro\
+ducers\x01\x0cprocessed-by\x02\x0dwit-component\x070.216.0\x10wit-bindgen-rust\x06\
+0.31.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

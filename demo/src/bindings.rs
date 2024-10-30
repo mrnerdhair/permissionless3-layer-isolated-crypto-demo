@@ -75,39 +75,7 @@ pub(crate) use __export_world_demo_cabi;
 struct _RetArea([::core::mem::MaybeUninit<u8>; 12]);
 static mut _RET_AREA: _RetArea = _RetArea([::core::mem::MaybeUninit::uninit(); 12]);
 #[allow(dead_code)]
-pub mod lay3r {
-    #[allow(dead_code)]
-    pub mod avs {
-        #[allow(dead_code, clippy::all)]
-        pub mod types {
-            #[used]
-            #[doc(hidden)]
-            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
-            use super::super::super::_rt;
-            pub type SerializedJson = _rt::Vec<u8>;
-            #[derive(Clone)]
-            pub struct TaskQueueInput {
-                pub timestamp: u64,
-                pub request: SerializedJson,
-            }
-            impl ::core::fmt::Debug for TaskQueueInput {
-                fn fmt(
-                    &self,
-                    f: &mut ::core::fmt::Formatter<'_>,
-                ) -> ::core::fmt::Result {
-                    f.debug_struct("TaskQueueInput")
-                        .field("timestamp", &self.timestamp)
-                        .field("request", &self.request)
-                        .finish()
-                }
-            }
-            pub type Error = _rt::String;
-            pub type Output = Result<SerializedJson, Error>;
-        }
-    }
-}
-#[allow(dead_code)]
-pub mod mrnerdhair {
+pub mod component {
     #[allow(dead_code)]
     pub mod isolated_crypto {
         #[allow(dead_code, clippy::all)]
@@ -116,9 +84,11 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
+            /// Big-endian 256-bit integer. Will be enforced by type once WebAssembly/component-model#384 percolates through the tooling.
+            /// In the meantime, expect a trap if you pass in a list of the wrong length.
             pub type U256be = _rt::Vec<u8>;
             #[repr(u8)]
-            #[derive(Clone, Copy, Eq, PartialEq)]
+            #[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
             pub enum DigestAlgorithm256 {
                 Sha256,
                 Keccak256,
@@ -158,8 +128,8 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type U256be = super::super::super::mrnerdhair::isolated_crypto::types::U256be;
-            pub type DigestAlgorithm256 = super::super::super::mrnerdhair::isolated_crypto::types::DigestAlgorithm256;
+            pub type U256be = super::super::super::component::isolated_crypto::types::U256be;
+            pub type DigestAlgorithm256 = super::super::super::component::isolated_crypto::types::DigestAlgorithm256;
             #[derive(Clone)]
             pub struct CompressedPoint {
                 pub x: U256be,
@@ -226,7 +196,7 @@ pub mod mrnerdhair {
                     #[cfg(target_arch = "wasm32")]
                     {
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[resource-drop]ecdsa-key"]
@@ -248,7 +218,7 @@ pub mod mrnerdhair {
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[method]ecdsa-key.get-public-key"]
@@ -294,7 +264,7 @@ pub mod mrnerdhair {
                         let ptr2 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[method]ecdsa-key.sign"]
@@ -370,7 +340,7 @@ pub mod mrnerdhair {
                         let ptr2 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
                         #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/secp256k1@0.14.0"
+                            wasm_import_module = "component:isolated-crypto/secp256k1"
                         )]
                         extern "C" {
                             #[link_name = "[method]ecdsa-key.sign-raw"]
@@ -427,9 +397,9 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type U256be = super::super::super::mrnerdhair::isolated_crypto::types::U256be;
-            pub type CompressedPoint = super::super::super::mrnerdhair::isolated_crypto::secp256k1::CompressedPoint;
-            pub type EcdsaKey = super::super::super::mrnerdhair::isolated_crypto::secp256k1::EcdsaKey;
+            pub type U256be = super::super::super::component::isolated_crypto::types::U256be;
+            pub type CompressedPoint = super::super::super::component::isolated_crypto::secp256k1::CompressedPoint;
+            pub type EcdsaKey = super::super::super::component::isolated_crypto::secp256k1::EcdsaKey;
             #[derive(Debug)]
             #[repr(transparent)]
             pub struct Seed {
@@ -458,9 +428,7 @@ pub mod mrnerdhair {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[resource-drop]seed"]
                             fn drop(_: u32);
@@ -497,9 +465,7 @@ pub mod mrnerdhair {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[resource-drop]node"]
                             fn drop(_: u32);
@@ -522,9 +488,7 @@ pub mod mrnerdhair {
                             None => (0i32, ::core::ptr::null_mut(), 0usize),
                         };
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]seed.to-master-key"]
                             fn wit_import(_: i32, _: i32, _: *mut u8, _: usize) -> i32;
@@ -554,9 +518,7 @@ pub mod mrnerdhair {
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.get-public-key"]
                             fn wit_import(_: i32, _: *mut u8);
@@ -570,7 +532,7 @@ pub mod mrnerdhair {
                         let l2 = *ptr0.add(4).cast::<usize>();
                         let len3 = l2;
                         let l4 = i32::from(*ptr0.add(8).cast::<u8>());
-                        super::super::super::mrnerdhair::isolated_crypto::secp256k1::CompressedPoint {
+                        super::super::super::component::isolated_crypto::secp256k1::CompressedPoint {
                             x: _rt::Vec::from_raw_parts(l1.cast(), len3, len3),
                             is_y_odd: _rt::bool_lift(l4 as u8),
                         }
@@ -588,9 +550,7 @@ pub mod mrnerdhair {
                         );
                         let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.get-chain-code"]
                             fn wit_import(_: i32, _: *mut u8);
@@ -612,9 +572,7 @@ pub mod mrnerdhair {
                 pub fn derive(&self, index: u32) -> Node {
                     unsafe {
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.derive"]
                             fn wit_import(_: i32, _: i32) -> i32;
@@ -636,9 +594,7 @@ pub mod mrnerdhair {
                 pub fn clone(&self) -> Node {
                     unsafe {
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.clone"]
                             fn wit_import(_: i32) -> i32;
@@ -657,9 +613,7 @@ pub mod mrnerdhair {
                 pub fn into_secp256k1_ecdsa_key(&self) -> EcdsaKey {
                     unsafe {
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip32@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip32")]
                         extern "C" {
                             #[link_name = "[method]node.into-secp256k1-ecdsa-key"]
                             fn wit_import(_: i32) -> i32;
@@ -669,7 +623,7 @@ pub mod mrnerdhair {
                             unreachable!()
                         }
                         let ret = wit_import((self).handle() as i32);
-                        super::super::super::mrnerdhair::isolated_crypto::secp256k1::EcdsaKey::from_handle(
+                        super::super::super::component::isolated_crypto::secp256k1::EcdsaKey::from_handle(
                             ret as u32,
                         )
                     }
@@ -682,7 +636,7 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type Seed = super::super::super::mrnerdhair::isolated_crypto::bip32::Seed;
+            pub type Seed = super::super::super::component::isolated_crypto::bip32::Seed;
             #[derive(Debug)]
             #[repr(transparent)]
             pub struct Mnemonic {
@@ -711,9 +665,7 @@ pub mod mrnerdhair {
                     unreachable!();
                     #[cfg(target_arch = "wasm32")]
                     {
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip39@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip39")]
                         extern "C" {
                             #[link_name = "[resource-drop]mnemonic"]
                             fn drop(_: u32);
@@ -736,9 +688,7 @@ pub mod mrnerdhair {
                         let len0 = vec0.len();
                         let ptr1 = ret_area.0.as_mut_ptr().cast::<u8>();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip39@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip39")]
                         extern "C" {
                             #[link_name = "[static]mnemonic.new"]
                             fn wit_import(_: *mut u8, _: usize, _: *mut u8);
@@ -784,9 +734,7 @@ pub mod mrnerdhair {
                         let ptr0 = vec0.as_ptr().cast::<u8>();
                         let len0 = vec0.len();
                         #[cfg(target_arch = "wasm32")]
-                        #[link(
-                            wasm_import_module = "mrnerdhair:isolated-crypto/bip39@0.14.0"
-                        )]
+                        #[link(wasm_import_module = "component:isolated-crypto/bip39")]
                         extern "C" {
                             #[link_name = "[method]mnemonic.to-seed"]
                             fn wit_import(_: i32, _: *mut u8, _: usize) -> i32;
@@ -800,7 +748,7 @@ pub mod mrnerdhair {
                             ptr0.cast_mut(),
                             len0,
                         );
-                        super::super::super::mrnerdhair::isolated_crypto::bip32::Seed::from_handle(
+                        super::super::super::component::isolated_crypto::bip32::Seed::from_handle(
                             ret as u32,
                         )
                     }
@@ -813,7 +761,7 @@ pub mod mrnerdhair {
             #[doc(hidden)]
             static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
             use super::super::super::_rt;
-            pub type Mnemonic = super::super::super::mrnerdhair::isolated_crypto::bip39::Mnemonic;
+            pub type Mnemonic = super::super::super::component::isolated_crypto::bip39::Mnemonic;
             #[allow(unused_unsafe, clippy::all)]
             pub fn get_mnemonic() -> Result<Mnemonic, _rt::String> {
                 unsafe {
@@ -823,7 +771,7 @@ pub mod mrnerdhair {
                     let ptr0 = ret_area.0.as_mut_ptr().cast::<u8>();
                     #[cfg(target_arch = "wasm32")]
                     #[link(
-                        wasm_import_module = "mrnerdhair:isolated-crypto/mnemonic-provider@0.14.0"
+                        wasm_import_module = "component:isolated-crypto/mnemonic-provider"
                     )]
                     extern "C" {
                         #[link_name = "get-mnemonic"]
@@ -839,7 +787,7 @@ pub mod mrnerdhair {
                         0 => {
                             let e = {
                                 let l2 = *ptr0.add(4).cast::<i32>();
-                                super::super::super::mrnerdhair::isolated_crypto::bip39::Mnemonic::from_handle(
+                                super::super::super::component::isolated_crypto::bip39::Mnemonic::from_handle(
                                     l2 as u32,
                                 )
                             };
@@ -863,6 +811,40 @@ pub mod mrnerdhair {
                     }
                 }
             }
+        }
+    }
+}
+#[allow(dead_code)]
+pub mod lay3r {
+    #[allow(dead_code)]
+    pub mod avs {
+        #[allow(dead_code, clippy::all)]
+        pub mod types {
+            #[used]
+            #[doc(hidden)]
+            static __FORCE_SECTION_REF: fn() = super::super::super::__link_custom_section_describing_imports;
+            use super::super::super::_rt;
+            /// serialized json, avs wasi and lay3r contract must agree on the types
+            /// the runner is agnostic to the data format
+            pub type SerializedJson = _rt::Vec<u8>;
+            #[derive(Clone)]
+            pub struct TaskQueueInput {
+                pub timestamp: u64,
+                pub request: SerializedJson,
+            }
+            impl ::core::fmt::Debug for TaskQueueInput {
+                fn fmt(
+                    &self,
+                    f: &mut ::core::fmt::Formatter<'_>,
+                ) -> ::core::fmt::Result {
+                    f.debug_struct("TaskQueueInput")
+                        .field("timestamp", &self.timestamp)
+                        .field("request", &self.request)
+                        .finish()
+                }
+            }
+            pub type Error = _rt::String;
+            pub type Output = Result<SerializedJson, Error>;
         }
     }
 }
@@ -1760,7 +1742,7 @@ pub mod wasi {
                             }
                             ptr
                         } else {
-                            { ::core::ptr::null_mut() }
+                            ::core::ptr::null_mut()
                         };
                         for (i, e) in vec3.into_iter().enumerate() {
                             let base = result3.add(i * 16);
@@ -1921,7 +1903,7 @@ pub mod wasi {
                             }
                             ptr
                         } else {
-                            { ::core::ptr::null_mut() }
+                            ::core::ptr::null_mut()
                         };
                         for (i, e) in vec2.into_iter().enumerate() {
                             let base = result2.add(i * 8);
@@ -6833,7 +6815,7 @@ pub mod wasi {
                         }
                         ptr
                     } else {
-                        { ::core::ptr::null_mut() }
+                        ::core::ptr::null_mut()
                     };
                     for (i, e) in vec0.into_iter().enumerate() {
                         let base = result0.add(i * 4);
@@ -8081,171 +8063,170 @@ macro_rules! __export_demo_impl {
 #[doc(inline)]
 pub(crate) use __export_demo_impl as export;
 #[cfg(target_arch = "wasm32")]
-#[link_section = "component-type:wit-bindgen:0.30.0:demo:encoded world"]
+#[link_section = "component-type:wit-bindgen:0.31.0:component:isolated-crypto-demo:demo:encoded world"]
 #[doc(hidden)]
-pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 7981] = *b"\
-\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\xb2=\x01A\x02\x01A-\x01\
+pub static __WIT_BINDGEN_COMPONENT_TYPE: [u8; 7933] = *b"\
+\0asm\x0d\0\x01\0\0\x19\x16wit-component-encoding\x04\0\x07\x82=\x01A\x02\x01A-\x01\
 B\x04\x01p}\x04\0\x06u256be\x03\0\0\x01m\x02\x06sha256\x09keccak256\x04\0\x13dig\
-est-algorithm256\x03\0\x02\x03\x01'mrnerdhair:isolated-crypto/types@0.14.0\x05\0\
-\x02\x03\0\0\x06u256be\x02\x03\0\0\x13digest-algorithm256\x01B\x15\x02\x03\x02\x01\
-\x01\x04\0\x06u256be\x03\0\0\x02\x03\x02\x01\x02\x04\0\x13digest-algorithm256\x03\
-\0\x02\x01r\x02\x01x\x01\x08is-y-odd\x7f\x04\0\x10compressed-point\x03\0\x04\x01\
-n\x02\x08is-y-odd\x0cis-x-reduced\x04\0\x0brecovery-id\x03\0\x06\x01r\x02\x01r\x01\
-\x01s\x01\x04\0\x09signature\x03\0\x08\x04\0\x09ecdsa-key\x03\x01\x01h\x0a\x01@\x01\
-\x04self\x0b\0\x05\x04\0\x20[method]ecdsa-key.get-public-key\x01\x0c\x01p}\x01ky\
-\x01o\x02\x09\x07\x01@\x04\x04self\x0b\x10digest-algorithm\x03\x07message\x0d\x07\
-counter\x0e\0\x0f\x04\0\x16[method]ecdsa-key.sign\x01\x10\x01@\x03\x04self\x0b\x06\
-digest\x01\x07counter\x0e\0\x0f\x04\0\x1a[method]ecdsa-key.sign-raw\x01\x11\x03\x01\
-+mrnerdhair:isolated-crypto/secp256k1@0.14.0\x05\x03\x02\x03\0\x01\x10compressed\
--point\x02\x03\0\x01\x09ecdsa-key\x01B\x1a\x02\x03\x02\x01\x01\x04\0\x06u256be\x03\
-\0\0\x02\x03\x02\x01\x04\x04\0\x10compressed-point\x03\0\x02\x02\x03\x02\x01\x05\
-\x04\0\x09ecdsa-key\x03\0\x04\x04\0\x04seed\x03\x01\x04\0\x04node\x03\x01\x01h\x06\
-\x01p}\x01k\x09\x01i\x07\x01@\x02\x04self\x08\x08hmac-key\x0a\0\x0b\x04\0\x1a[me\
-thod]seed.to-master-key\x01\x0c\x01h\x07\x01@\x01\x04self\x0d\0\x03\x04\0\x1b[me\
-thod]node.get-public-key\x01\x0e\x01@\x01\x04self\x0d\0\x01\x04\0\x1b[method]nod\
-e.get-chain-code\x01\x0f\x01@\x02\x04self\x0d\x05indexy\0\x0b\x04\0\x13[method]n\
-ode.derive\x01\x10\x01@\x01\x04self\x0d\0\x0b\x04\0\x12[method]node.clone\x01\x11\
-\x01i\x05\x01@\x01\x04self\x0d\0\x12\x04\0%[method]node.into-secp256k1-ecdsa-key\
-\x01\x13\x03\x01'mrnerdhair:isolated-crypto/bip32@0.14.0\x05\x06\x02\x03\0\x02\x04\
-seed\x01B\x0b\x02\x03\x02\x01\x07\x04\0\x04seed\x03\0\0\x04\0\x08mnemonic\x03\x01\
-\x01i\x02\x01j\x01\x03\x01s\x01@\x01\x08mnemonics\0\x04\x04\0\x14[static]mnemoni\
-c.new\x01\x05\x01h\x02\x01i\x01\x01@\x02\x04self\x06\x0apassphrases\0\x07\x04\0\x18\
-[method]mnemonic.to-seed\x01\x08\x03\x01'mrnerdhair:isolated-crypto/bip39@0.14.0\
-\x05\x08\x02\x03\0\x03\x08mnemonic\x01B\x06\x02\x03\x02\x01\x09\x04\0\x08mnemoni\
-c\x03\0\0\x01i\x01\x01j\x01\x02\x01s\x01@\0\0\x03\x04\0\x0cget-mnemonic\x01\x04\x03\
-\x013mrnerdhair:isolated-crypto/mnemonic-provider@0.14.0\x05\x0a\x01B\x0a\x04\0\x08\
-pollable\x03\x01\x01h\0\x01@\x01\x04self\x01\0\x7f\x04\0\x16[method]pollable.rea\
-dy\x01\x02\x01@\x01\x04self\x01\x01\0\x04\0\x16[method]pollable.block\x01\x03\x01\
-p\x01\x01py\x01@\x01\x02in\x04\0\x05\x04\0\x04poll\x01\x06\x03\x01\x12wasi:io/po\
-ll@0.2.0\x05\x0b\x02\x03\0\x05\x08pollable\x01B\x0f\x02\x03\x02\x01\x0c\x04\0\x08\
-pollable\x03\0\0\x01w\x04\0\x07instant\x03\0\x02\x01w\x04\0\x08duration\x03\0\x04\
-\x01@\0\0\x03\x04\0\x03now\x01\x06\x01@\0\0\x05\x04\0\x0aresolution\x01\x07\x01i\
-\x01\x01@\x01\x04when\x03\0\x08\x04\0\x11subscribe-instant\x01\x09\x01@\x01\x04w\
-hen\x05\0\x08\x04\0\x12subscribe-duration\x01\x0a\x03\x01!wasi:clocks/monotonic-\
-clock@0.2.0\x05\x0d\x01B\x04\x04\0\x05error\x03\x01\x01h\0\x01@\x01\x04self\x01\0\
-s\x04\0\x1d[method]error.to-debug-string\x01\x02\x03\x01\x13wasi:io/error@0.2.0\x05\
-\x0e\x02\x03\0\x07\x05error\x01B(\x02\x03\x02\x01\x0f\x04\0\x05error\x03\0\0\x02\
-\x03\x02\x01\x0c\x04\0\x08pollable\x03\0\x02\x01i\x01\x01q\x02\x15last-operation\
--failed\x01\x04\0\x06closed\0\0\x04\0\x0cstream-error\x03\0\x05\x04\0\x0cinput-s\
-tream\x03\x01\x04\0\x0doutput-stream\x03\x01\x01h\x07\x01p}\x01j\x01\x0a\x01\x06\
-\x01@\x02\x04self\x09\x03lenw\0\x0b\x04\0\x19[method]input-stream.read\x01\x0c\x04\
-\0\"[method]input-stream.blocking-read\x01\x0c\x01j\x01w\x01\x06\x01@\x02\x04sel\
-f\x09\x03lenw\0\x0d\x04\0\x19[method]input-stream.skip\x01\x0e\x04\0\"[method]in\
-put-stream.blocking-skip\x01\x0e\x01i\x03\x01@\x01\x04self\x09\0\x0f\x04\0\x1e[m\
-ethod]input-stream.subscribe\x01\x10\x01h\x08\x01@\x01\x04self\x11\0\x0d\x04\0![\
-method]output-stream.check-write\x01\x12\x01j\0\x01\x06\x01@\x02\x04self\x11\x08\
-contents\x0a\0\x13\x04\0\x1b[method]output-stream.write\x01\x14\x04\0.[method]ou\
-tput-stream.blocking-write-and-flush\x01\x14\x01@\x01\x04self\x11\0\x13\x04\0\x1b\
-[method]output-stream.flush\x01\x15\x04\0$[method]output-stream.blocking-flush\x01\
-\x15\x01@\x01\x04self\x11\0\x0f\x04\0\x1f[method]output-stream.subscribe\x01\x16\
-\x01@\x02\x04self\x11\x03lenw\0\x13\x04\0\"[method]output-stream.write-zeroes\x01\
-\x17\x04\05[method]output-stream.blocking-write-zeroes-and-flush\x01\x17\x01@\x03\
-\x04self\x11\x03src\x09\x03lenw\0\x0d\x04\0\x1c[method]output-stream.splice\x01\x18\
-\x04\0%[method]output-stream.blocking-splice\x01\x18\x03\x01\x15wasi:io/streams@\
-0.2.0\x05\x10\x02\x03\0\x06\x08duration\x02\x03\0\x08\x0cinput-stream\x02\x03\0\x08\
-\x0doutput-stream\x01B\xc0\x01\x02\x03\x02\x01\x11\x04\0\x08duration\x03\0\0\x02\
-\x03\x02\x01\x12\x04\0\x0cinput-stream\x03\0\x02\x02\x03\x02\x01\x13\x04\0\x0dou\
-tput-stream\x03\0\x04\x02\x03\x02\x01\x0f\x04\0\x08io-error\x03\0\x06\x02\x03\x02\
-\x01\x0c\x04\0\x08pollable\x03\0\x08\x01q\x0a\x03get\0\0\x04head\0\0\x04post\0\0\
-\x03put\0\0\x06delete\0\0\x07connect\0\0\x07options\0\0\x05trace\0\0\x05patch\0\0\
-\x05other\x01s\0\x04\0\x06method\x03\0\x0a\x01q\x03\x04HTTP\0\0\x05HTTPS\0\0\x05\
-other\x01s\0\x04\0\x06scheme\x03\0\x0c\x01ks\x01k{\x01r\x02\x05rcode\x0e\x09info\
--code\x0f\x04\0\x11DNS-error-payload\x03\0\x10\x01k}\x01r\x02\x08alert-id\x12\x0d\
-alert-message\x0e\x04\0\x1aTLS-alert-received-payload\x03\0\x13\x01ky\x01r\x02\x0a\
-field-name\x0e\x0afield-size\x15\x04\0\x12field-size-payload\x03\0\x16\x01kw\x01\
-k\x17\x01q'\x0bDNS-timeout\0\0\x09DNS-error\x01\x11\0\x15destination-not-found\0\
-\0\x17destination-unavailable\0\0\x19destination-IP-prohibited\0\0\x19destinatio\
-n-IP-unroutable\0\0\x12connection-refused\0\0\x15connection-terminated\0\0\x12co\
-nnection-timeout\0\0\x17connection-read-timeout\0\0\x18connection-write-timeout\0\
-\0\x18connection-limit-reached\0\0\x12TLS-protocol-error\0\0\x15TLS-certificate-\
-error\0\0\x12TLS-alert-received\x01\x14\0\x13HTTP-request-denied\0\0\x1cHTTP-req\
-uest-length-required\0\0\x16HTTP-request-body-size\x01\x18\0\x1bHTTP-request-met\
-hod-invalid\0\0\x18HTTP-request-URI-invalid\0\0\x19HTTP-request-URI-too-long\0\0\
-\x20HTTP-request-header-section-size\x01\x15\0\x18HTTP-request-header-size\x01\x19\
-\0!HTTP-request-trailer-section-size\x01\x15\0\x19HTTP-request-trailer-size\x01\x17\
-\0\x18HTTP-response-incomplete\0\0!HTTP-response-header-section-size\x01\x15\0\x19\
-HTTP-response-header-size\x01\x17\0\x17HTTP-response-body-size\x01\x18\0\"HTTP-r\
-esponse-trailer-section-size\x01\x15\0\x1aHTTP-response-trailer-size\x01\x17\0\x1d\
-HTTP-response-transfer-coding\x01\x0e\0\x1cHTTP-response-content-coding\x01\x0e\0\
-\x15HTTP-response-timeout\0\0\x13HTTP-upgrade-failed\0\0\x13HTTP-protocol-error\0\
-\0\x0dloop-detected\0\0\x13configuration-error\0\0\x0einternal-error\x01\x0e\0\x04\
-\0\x0aerror-code\x03\0\x1a\x01q\x03\x0einvalid-syntax\0\0\x09forbidden\0\0\x09im\
-mutable\0\0\x04\0\x0cheader-error\x03\0\x1c\x01s\x04\0\x09field-key\x03\0\x1e\x01\
-p}\x04\0\x0bfield-value\x03\0\x20\x04\0\x06fields\x03\x01\x04\0\x07headers\x03\0\
-\"\x04\0\x08trailers\x03\0\"\x04\0\x10incoming-request\x03\x01\x04\0\x10outgoing\
--request\x03\x01\x04\0\x0frequest-options\x03\x01\x04\0\x11response-outparam\x03\
-\x01\x01{\x04\0\x0bstatus-code\x03\0)\x04\0\x11incoming-response\x03\x01\x04\0\x0d\
-incoming-body\x03\x01\x04\0\x0ffuture-trailers\x03\x01\x04\0\x11outgoing-respons\
-e\x03\x01\x04\0\x0doutgoing-body\x03\x01\x04\0\x18future-incoming-response\x03\x01\
-\x01i\"\x01@\0\01\x04\0\x13[constructor]fields\x012\x01o\x02\x1f!\x01p3\x01j\x01\
-1\x01\x1d\x01@\x01\x07entries4\05\x04\0\x18[static]fields.from-list\x016\x01h\"\x01\
-p!\x01@\x02\x04self7\x04name\x1f\08\x04\0\x12[method]fields.get\x019\x01@\x02\x04\
-self7\x04name\x1f\0\x7f\x04\0\x12[method]fields.has\x01:\x01j\0\x01\x1d\x01@\x03\
-\x04self7\x04name\x1f\x05value8\0;\x04\0\x12[method]fields.set\x01<\x01@\x02\x04\
-self7\x04name\x1f\0;\x04\0\x15[method]fields.delete\x01=\x01@\x03\x04self7\x04na\
-me\x1f\x05value!\0;\x04\0\x15[method]fields.append\x01>\x01@\x01\x04self7\04\x04\
-\0\x16[method]fields.entries\x01?\x01@\x01\x04self7\01\x04\0\x14[method]fields.c\
-lone\x01@\x01h%\x01@\x01\x04self\xc1\0\0\x0b\x04\0\x1f[method]incoming-request.m\
-ethod\x01B\x01@\x01\x04self\xc1\0\0\x0e\x04\0([method]incoming-request.path-with\
--query\x01C\x01k\x0d\x01@\x01\x04self\xc1\0\0\xc4\0\x04\0\x1f[method]incoming-re\
-quest.scheme\x01E\x04\0\"[method]incoming-request.authority\x01C\x01i#\x01@\x01\x04\
-self\xc1\0\0\xc6\0\x04\0\x20[method]incoming-request.headers\x01G\x01i,\x01j\x01\
-\xc8\0\0\x01@\x01\x04self\xc1\0\0\xc9\0\x04\0\x20[method]incoming-request.consum\
-e\x01J\x01i&\x01@\x01\x07headers\xc6\0\0\xcb\0\x04\0\x1d[constructor]outgoing-re\
-quest\x01L\x01h&\x01i/\x01j\x01\xce\0\0\x01@\x01\x04self\xcd\0\0\xcf\0\x04\0\x1d\
-[method]outgoing-request.body\x01P\x01@\x01\x04self\xcd\0\0\x0b\x04\0\x1f[method\
-]outgoing-request.method\x01Q\x01j\0\0\x01@\x02\x04self\xcd\0\x06method\x0b\0\xd2\
-\0\x04\0#[method]outgoing-request.set-method\x01S\x01@\x01\x04self\xcd\0\0\x0e\x04\
-\0([method]outgoing-request.path-with-query\x01T\x01@\x02\x04self\xcd\0\x0fpath-\
-with-query\x0e\0\xd2\0\x04\0,[method]outgoing-request.set-path-with-query\x01U\x01\
-@\x01\x04self\xcd\0\0\xc4\0\x04\0\x1f[method]outgoing-request.scheme\x01V\x01@\x02\
-\x04self\xcd\0\x06scheme\xc4\0\0\xd2\0\x04\0#[method]outgoing-request.set-scheme\
-\x01W\x04\0\"[method]outgoing-request.authority\x01T\x01@\x02\x04self\xcd\0\x09a\
-uthority\x0e\0\xd2\0\x04\0&[method]outgoing-request.set-authority\x01X\x01@\x01\x04\
-self\xcd\0\0\xc6\0\x04\0\x20[method]outgoing-request.headers\x01Y\x01i'\x01@\0\0\
-\xda\0\x04\0\x1c[constructor]request-options\x01[\x01h'\x01k\x01\x01@\x01\x04sel\
-f\xdc\0\0\xdd\0\x04\0'[method]request-options.connect-timeout\x01^\x01@\x02\x04s\
-elf\xdc\0\x08duration\xdd\0\0\xd2\0\x04\0+[method]request-options.set-connect-ti\
-meout\x01_\x04\0*[method]request-options.first-byte-timeout\x01^\x04\0.[method]r\
-equest-options.set-first-byte-timeout\x01_\x04\0-[method]request-options.between\
--bytes-timeout\x01^\x04\01[method]request-options.set-between-bytes-timeout\x01_\
-\x01i(\x01i.\x01j\x01\xe1\0\x01\x1b\x01@\x02\x05param\xe0\0\x08response\xe2\0\x01\
-\0\x04\0\x1d[static]response-outparam.set\x01c\x01h+\x01@\x01\x04self\xe4\0\0*\x04\
-\0\x20[method]incoming-response.status\x01e\x01@\x01\x04self\xe4\0\0\xc6\0\x04\0\
-![method]incoming-response.headers\x01f\x01@\x01\x04self\xe4\0\0\xc9\0\x04\0![me\
-thod]incoming-response.consume\x01g\x01h,\x01i\x03\x01j\x01\xe9\0\0\x01@\x01\x04\
-self\xe8\0\0\xea\0\x04\0\x1c[method]incoming-body.stream\x01k\x01i-\x01@\x01\x04\
-this\xc8\0\0\xec\0\x04\0\x1c[static]incoming-body.finish\x01m\x01h-\x01i\x09\x01\
-@\x01\x04self\xee\0\0\xef\0\x04\0![method]future-trailers.subscribe\x01p\x01i$\x01\
-k\xf1\0\x01j\x01\xf2\0\x01\x1b\x01j\x01\xf3\0\0\x01k\xf4\0\x01@\x01\x04self\xee\0\
-\0\xf5\0\x04\0\x1b[method]future-trailers.get\x01v\x01@\x01\x07headers\xc6\0\0\xe1\
-\0\x04\0\x1e[constructor]outgoing-response\x01w\x01h.\x01@\x01\x04self\xf8\0\0*\x04\
-\0%[method]outgoing-response.status-code\x01y\x01@\x02\x04self\xf8\0\x0bstatus-c\
-ode*\0\xd2\0\x04\0)[method]outgoing-response.set-status-code\x01z\x01@\x01\x04se\
-lf\xf8\0\0\xc6\0\x04\0![method]outgoing-response.headers\x01{\x01@\x01\x04self\xf8\
-\0\0\xcf\0\x04\0\x1e[method]outgoing-response.body\x01|\x01h/\x01i\x05\x01j\x01\xfe\
-\0\0\x01@\x01\x04self\xfd\0\0\xff\0\x04\0\x1b[method]outgoing-body.write\x01\x80\
-\x01\x01j\0\x01\x1b\x01@\x02\x04this\xce\0\x08trailers\xf2\0\0\x81\x01\x04\0\x1c\
-[static]outgoing-body.finish\x01\x82\x01\x01h0\x01@\x01\x04self\x83\x01\0\xef\0\x04\
-\0*[method]future-incoming-response.subscribe\x01\x84\x01\x01i+\x01j\x01\x85\x01\
-\x01\x1b\x01j\x01\x86\x01\0\x01k\x87\x01\x01@\x01\x04self\x83\x01\0\x88\x01\x04\0\
-$[method]future-incoming-response.get\x01\x89\x01\x01h\x07\x01k\x1b\x01@\x01\x03\
-err\x8a\x01\0\x8b\x01\x04\0\x0fhttp-error-code\x01\x8c\x01\x03\x01\x15wasi:http/\
-types@0.2.0\x05\x14\x02\x03\0\x09\x10outgoing-request\x02\x03\0\x09\x0frequest-o\
-ptions\x02\x03\0\x09\x18future-incoming-response\x02\x03\0\x09\x0aerror-code\x01\
-B\x0f\x02\x03\x02\x01\x15\x04\0\x10outgoing-request\x03\0\0\x02\x03\x02\x01\x16\x04\
-\0\x0frequest-options\x03\0\x02\x02\x03\x02\x01\x17\x04\0\x18future-incoming-res\
-ponse\x03\0\x04\x02\x03\x02\x01\x18\x04\0\x0aerror-code\x03\0\x06\x01i\x01\x01i\x03\
-\x01k\x09\x01i\x05\x01j\x01\x0b\x01\x07\x01@\x02\x07request\x08\x07options\x0a\0\
-\x0c\x04\0\x06handle\x01\x0d\x03\x01\x20wasi:http/outgoing-handler@0.2.0\x05\x19\
-\x01B\x08\x01p}\x04\0\x0fserialized-json\x03\0\0\x01r\x02\x09timestampw\x07reque\
-st\x01\x04\0\x10task-queue-input\x03\0\x02\x01s\x04\0\x05error\x03\0\x04\x01j\x01\
-\x01\x01\x05\x04\0\x06output\x03\0\x06\x03\x01\x15lay3r:avs/types@0.3.0\x05\x1a\x02\
-\x03\0\x0b\x10task-queue-input\x03\0\x10task-queue-input\x03\0\x1b\x02\x03\0\x0b\
-\x06output\x03\0\x06output\x03\0\x1d\x01@\x01\x07request\x1c\0\x1e\x04\0\x08run-\
-task\x01\x1f\x04\x01+mrnerdhair:isolated-crypto-demo/demo@0.14.0\x04\0\x0b\x0a\x01\
-\0\x04demo\x03\0\0\0G\x09producers\x01\x0cprocessed-by\x02\x0dwit-component\x070\
-.215.0\x10wit-bindgen-rust\x060.30.0";
+est-algorithm256\x03\0\x02\x03\x01\x1fcomponent:isolated-crypto/types\x05\0\x02\x03\
+\0\0\x06u256be\x02\x03\0\0\x13digest-algorithm256\x01B\x15\x02\x03\x02\x01\x01\x04\
+\0\x06u256be\x03\0\0\x02\x03\x02\x01\x02\x04\0\x13digest-algorithm256\x03\0\x02\x01\
+r\x02\x01x\x01\x08is-y-odd\x7f\x04\0\x10compressed-point\x03\0\x04\x01n\x02\x08i\
+s-y-odd\x0cis-x-reduced\x04\0\x0brecovery-id\x03\0\x06\x01r\x02\x01r\x01\x01s\x01\
+\x04\0\x09signature\x03\0\x08\x04\0\x09ecdsa-key\x03\x01\x01h\x0a\x01@\x01\x04se\
+lf\x0b\0\x05\x04\0\x20[method]ecdsa-key.get-public-key\x01\x0c\x01p}\x01ky\x01o\x02\
+\x09\x07\x01@\x04\x04self\x0b\x10digest-algorithm\x03\x07message\x0d\x07counter\x0e\
+\0\x0f\x04\0\x16[method]ecdsa-key.sign\x01\x10\x01@\x03\x04self\x0b\x06digest\x01\
+\x07counter\x0e\0\x0f\x04\0\x1a[method]ecdsa-key.sign-raw\x01\x11\x03\x01#compon\
+ent:isolated-crypto/secp256k1\x05\x03\x02\x03\0\x01\x10compressed-point\x02\x03\0\
+\x01\x09ecdsa-key\x01B\x1a\x02\x03\x02\x01\x01\x04\0\x06u256be\x03\0\0\x02\x03\x02\
+\x01\x04\x04\0\x10compressed-point\x03\0\x02\x02\x03\x02\x01\x05\x04\0\x09ecdsa-\
+key\x03\0\x04\x04\0\x04seed\x03\x01\x04\0\x04node\x03\x01\x01h\x06\x01p}\x01k\x09\
+\x01i\x07\x01@\x02\x04self\x08\x08hmac-key\x0a\0\x0b\x04\0\x1a[method]seed.to-ma\
+ster-key\x01\x0c\x01h\x07\x01@\x01\x04self\x0d\0\x03\x04\0\x1b[method]node.get-p\
+ublic-key\x01\x0e\x01@\x01\x04self\x0d\0\x01\x04\0\x1b[method]node.get-chain-cod\
+e\x01\x0f\x01@\x02\x04self\x0d\x05indexy\0\x0b\x04\0\x13[method]node.derive\x01\x10\
+\x01@\x01\x04self\x0d\0\x0b\x04\0\x12[method]node.clone\x01\x11\x01i\x05\x01@\x01\
+\x04self\x0d\0\x12\x04\0%[method]node.into-secp256k1-ecdsa-key\x01\x13\x03\x01\x1f\
+component:isolated-crypto/bip32\x05\x06\x02\x03\0\x02\x04seed\x01B\x0b\x02\x03\x02\
+\x01\x07\x04\0\x04seed\x03\0\0\x04\0\x08mnemonic\x03\x01\x01i\x02\x01j\x01\x03\x01\
+s\x01@\x01\x08mnemonics\0\x04\x04\0\x14[static]mnemonic.new\x01\x05\x01h\x02\x01\
+i\x01\x01@\x02\x04self\x06\x0apassphrases\0\x07\x04\0\x18[method]mnemonic.to-see\
+d\x01\x08\x03\x01\x1fcomponent:isolated-crypto/bip39\x05\x08\x02\x03\0\x03\x08mn\
+emonic\x01B\x06\x02\x03\x02\x01\x09\x04\0\x08mnemonic\x03\0\0\x01i\x01\x01j\x01\x02\
+\x01s\x01@\0\0\x03\x04\0\x0cget-mnemonic\x01\x04\x03\x01+component:isolated-cryp\
+to/mnemonic-provider\x05\x0a\x01B\x0a\x04\0\x08pollable\x03\x01\x01h\0\x01@\x01\x04\
+self\x01\0\x7f\x04\0\x16[method]pollable.ready\x01\x02\x01@\x01\x04self\x01\x01\0\
+\x04\0\x16[method]pollable.block\x01\x03\x01p\x01\x01py\x01@\x01\x02in\x04\0\x05\
+\x04\0\x04poll\x01\x06\x03\x01\x12wasi:io/poll@0.2.0\x05\x0b\x02\x03\0\x05\x08po\
+llable\x01B\x0f\x02\x03\x02\x01\x0c\x04\0\x08pollable\x03\0\0\x01w\x04\0\x07inst\
+ant\x03\0\x02\x01w\x04\0\x08duration\x03\0\x04\x01@\0\0\x03\x04\0\x03now\x01\x06\
+\x01@\0\0\x05\x04\0\x0aresolution\x01\x07\x01i\x01\x01@\x01\x04when\x03\0\x08\x04\
+\0\x11subscribe-instant\x01\x09\x01@\x01\x04when\x05\0\x08\x04\0\x12subscribe-du\
+ration\x01\x0a\x03\x01!wasi:clocks/monotonic-clock@0.2.0\x05\x0d\x01B\x04\x04\0\x05\
+error\x03\x01\x01h\0\x01@\x01\x04self\x01\0s\x04\0\x1d[method]error.to-debug-str\
+ing\x01\x02\x03\x01\x13wasi:io/error@0.2.0\x05\x0e\x02\x03\0\x07\x05error\x01B(\x02\
+\x03\x02\x01\x0f\x04\0\x05error\x03\0\0\x02\x03\x02\x01\x0c\x04\0\x08pollable\x03\
+\0\x02\x01i\x01\x01q\x02\x15last-operation-failed\x01\x04\0\x06closed\0\0\x04\0\x0c\
+stream-error\x03\0\x05\x04\0\x0cinput-stream\x03\x01\x04\0\x0doutput-stream\x03\x01\
+\x01h\x07\x01p}\x01j\x01\x0a\x01\x06\x01@\x02\x04self\x09\x03lenw\0\x0b\x04\0\x19\
+[method]input-stream.read\x01\x0c\x04\0\"[method]input-stream.blocking-read\x01\x0c\
+\x01j\x01w\x01\x06\x01@\x02\x04self\x09\x03lenw\0\x0d\x04\0\x19[method]input-str\
+eam.skip\x01\x0e\x04\0\"[method]input-stream.blocking-skip\x01\x0e\x01i\x03\x01@\
+\x01\x04self\x09\0\x0f\x04\0\x1e[method]input-stream.subscribe\x01\x10\x01h\x08\x01\
+@\x01\x04self\x11\0\x0d\x04\0![method]output-stream.check-write\x01\x12\x01j\0\x01\
+\x06\x01@\x02\x04self\x11\x08contents\x0a\0\x13\x04\0\x1b[method]output-stream.w\
+rite\x01\x14\x04\0.[method]output-stream.blocking-write-and-flush\x01\x14\x01@\x01\
+\x04self\x11\0\x13\x04\0\x1b[method]output-stream.flush\x01\x15\x04\0$[method]ou\
+tput-stream.blocking-flush\x01\x15\x01@\x01\x04self\x11\0\x0f\x04\0\x1f[method]o\
+utput-stream.subscribe\x01\x16\x01@\x02\x04self\x11\x03lenw\0\x13\x04\0\"[method\
+]output-stream.write-zeroes\x01\x17\x04\05[method]output-stream.blocking-write-z\
+eroes-and-flush\x01\x17\x01@\x03\x04self\x11\x03src\x09\x03lenw\0\x0d\x04\0\x1c[\
+method]output-stream.splice\x01\x18\x04\0%[method]output-stream.blocking-splice\x01\
+\x18\x03\x01\x15wasi:io/streams@0.2.0\x05\x10\x02\x03\0\x06\x08duration\x02\x03\0\
+\x08\x0cinput-stream\x02\x03\0\x08\x0doutput-stream\x01B\xc0\x01\x02\x03\x02\x01\
+\x11\x04\0\x08duration\x03\0\0\x02\x03\x02\x01\x12\x04\0\x0cinput-stream\x03\0\x02\
+\x02\x03\x02\x01\x13\x04\0\x0doutput-stream\x03\0\x04\x02\x03\x02\x01\x0f\x04\0\x08\
+io-error\x03\0\x06\x02\x03\x02\x01\x0c\x04\0\x08pollable\x03\0\x08\x01q\x0a\x03g\
+et\0\0\x04head\0\0\x04post\0\0\x03put\0\0\x06delete\0\0\x07connect\0\0\x07option\
+s\0\0\x05trace\0\0\x05patch\0\0\x05other\x01s\0\x04\0\x06method\x03\0\x0a\x01q\x03\
+\x04HTTP\0\0\x05HTTPS\0\0\x05other\x01s\0\x04\0\x06scheme\x03\0\x0c\x01ks\x01k{\x01\
+r\x02\x05rcode\x0e\x09info-code\x0f\x04\0\x11DNS-error-payload\x03\0\x10\x01k}\x01\
+r\x02\x08alert-id\x12\x0dalert-message\x0e\x04\0\x1aTLS-alert-received-payload\x03\
+\0\x13\x01ky\x01r\x02\x0afield-name\x0e\x0afield-size\x15\x04\0\x12field-size-pa\
+yload\x03\0\x16\x01kw\x01k\x17\x01q'\x0bDNS-timeout\0\0\x09DNS-error\x01\x11\0\x15\
+destination-not-found\0\0\x17destination-unavailable\0\0\x19destination-IP-prohi\
+bited\0\0\x19destination-IP-unroutable\0\0\x12connection-refused\0\0\x15connecti\
+on-terminated\0\0\x12connection-timeout\0\0\x17connection-read-timeout\0\0\x18co\
+nnection-write-timeout\0\0\x18connection-limit-reached\0\0\x12TLS-protocol-error\
+\0\0\x15TLS-certificate-error\0\0\x12TLS-alert-received\x01\x14\0\x13HTTP-reques\
+t-denied\0\0\x1cHTTP-request-length-required\0\0\x16HTTP-request-body-size\x01\x18\
+\0\x1bHTTP-request-method-invalid\0\0\x18HTTP-request-URI-invalid\0\0\x19HTTP-re\
+quest-URI-too-long\0\0\x20HTTP-request-header-section-size\x01\x15\0\x18HTTP-req\
+uest-header-size\x01\x19\0!HTTP-request-trailer-section-size\x01\x15\0\x19HTTP-r\
+equest-trailer-size\x01\x17\0\x18HTTP-response-incomplete\0\0!HTTP-response-head\
+er-section-size\x01\x15\0\x19HTTP-response-header-size\x01\x17\0\x17HTTP-respons\
+e-body-size\x01\x18\0\"HTTP-response-trailer-section-size\x01\x15\0\x1aHTTP-resp\
+onse-trailer-size\x01\x17\0\x1dHTTP-response-transfer-coding\x01\x0e\0\x1cHTTP-r\
+esponse-content-coding\x01\x0e\0\x15HTTP-response-timeout\0\0\x13HTTP-upgrade-fa\
+iled\0\0\x13HTTP-protocol-error\0\0\x0dloop-detected\0\0\x13configuration-error\0\
+\0\x0einternal-error\x01\x0e\0\x04\0\x0aerror-code\x03\0\x1a\x01q\x03\x0einvalid\
+-syntax\0\0\x09forbidden\0\0\x09immutable\0\0\x04\0\x0cheader-error\x03\0\x1c\x01\
+s\x04\0\x09field-key\x03\0\x1e\x01p}\x04\0\x0bfield-value\x03\0\x20\x04\0\x06fie\
+lds\x03\x01\x04\0\x07headers\x03\0\"\x04\0\x08trailers\x03\0\"\x04\0\x10incoming\
+-request\x03\x01\x04\0\x10outgoing-request\x03\x01\x04\0\x0frequest-options\x03\x01\
+\x04\0\x11response-outparam\x03\x01\x01{\x04\0\x0bstatus-code\x03\0)\x04\0\x11in\
+coming-response\x03\x01\x04\0\x0dincoming-body\x03\x01\x04\0\x0ffuture-trailers\x03\
+\x01\x04\0\x11outgoing-response\x03\x01\x04\0\x0doutgoing-body\x03\x01\x04\0\x18\
+future-incoming-response\x03\x01\x01i\"\x01@\0\01\x04\0\x13[constructor]fields\x01\
+2\x01o\x02\x1f!\x01p3\x01j\x011\x01\x1d\x01@\x01\x07entries4\05\x04\0\x18[static\
+]fields.from-list\x016\x01h\"\x01p!\x01@\x02\x04self7\x04name\x1f\08\x04\0\x12[m\
+ethod]fields.get\x019\x01@\x02\x04self7\x04name\x1f\0\x7f\x04\0\x12[method]field\
+s.has\x01:\x01j\0\x01\x1d\x01@\x03\x04self7\x04name\x1f\x05value8\0;\x04\0\x12[m\
+ethod]fields.set\x01<\x01@\x02\x04self7\x04name\x1f\0;\x04\0\x15[method]fields.d\
+elete\x01=\x01@\x03\x04self7\x04name\x1f\x05value!\0;\x04\0\x15[method]fields.ap\
+pend\x01>\x01@\x01\x04self7\04\x04\0\x16[method]fields.entries\x01?\x01@\x01\x04\
+self7\01\x04\0\x14[method]fields.clone\x01@\x01h%\x01@\x01\x04self\xc1\0\0\x0b\x04\
+\0\x1f[method]incoming-request.method\x01B\x01@\x01\x04self\xc1\0\0\x0e\x04\0([m\
+ethod]incoming-request.path-with-query\x01C\x01k\x0d\x01@\x01\x04self\xc1\0\0\xc4\
+\0\x04\0\x1f[method]incoming-request.scheme\x01E\x04\0\"[method]incoming-request\
+.authority\x01C\x01i#\x01@\x01\x04self\xc1\0\0\xc6\0\x04\0\x20[method]incoming-r\
+equest.headers\x01G\x01i,\x01j\x01\xc8\0\0\x01@\x01\x04self\xc1\0\0\xc9\0\x04\0\x20\
+[method]incoming-request.consume\x01J\x01i&\x01@\x01\x07headers\xc6\0\0\xcb\0\x04\
+\0\x1d[constructor]outgoing-request\x01L\x01h&\x01i/\x01j\x01\xce\0\0\x01@\x01\x04\
+self\xcd\0\0\xcf\0\x04\0\x1d[method]outgoing-request.body\x01P\x01@\x01\x04self\xcd\
+\0\0\x0b\x04\0\x1f[method]outgoing-request.method\x01Q\x01j\0\0\x01@\x02\x04self\
+\xcd\0\x06method\x0b\0\xd2\0\x04\0#[method]outgoing-request.set-method\x01S\x01@\
+\x01\x04self\xcd\0\0\x0e\x04\0([method]outgoing-request.path-with-query\x01T\x01\
+@\x02\x04self\xcd\0\x0fpath-with-query\x0e\0\xd2\0\x04\0,[method]outgoing-reques\
+t.set-path-with-query\x01U\x01@\x01\x04self\xcd\0\0\xc4\0\x04\0\x1f[method]outgo\
+ing-request.scheme\x01V\x01@\x02\x04self\xcd\0\x06scheme\xc4\0\0\xd2\0\x04\0#[me\
+thod]outgoing-request.set-scheme\x01W\x04\0\"[method]outgoing-request.authority\x01\
+T\x01@\x02\x04self\xcd\0\x09authority\x0e\0\xd2\0\x04\0&[method]outgoing-request\
+.set-authority\x01X\x01@\x01\x04self\xcd\0\0\xc6\0\x04\0\x20[method]outgoing-req\
+uest.headers\x01Y\x01i'\x01@\0\0\xda\0\x04\0\x1c[constructor]request-options\x01\
+[\x01h'\x01k\x01\x01@\x01\x04self\xdc\0\0\xdd\0\x04\0'[method]request-options.co\
+nnect-timeout\x01^\x01@\x02\x04self\xdc\0\x08duration\xdd\0\0\xd2\0\x04\0+[metho\
+d]request-options.set-connect-timeout\x01_\x04\0*[method]request-options.first-b\
+yte-timeout\x01^\x04\0.[method]request-options.set-first-byte-timeout\x01_\x04\0\
+-[method]request-options.between-bytes-timeout\x01^\x04\01[method]request-option\
+s.set-between-bytes-timeout\x01_\x01i(\x01i.\x01j\x01\xe1\0\x01\x1b\x01@\x02\x05\
+param\xe0\0\x08response\xe2\0\x01\0\x04\0\x1d[static]response-outparam.set\x01c\x01\
+h+\x01@\x01\x04self\xe4\0\0*\x04\0\x20[method]incoming-response.status\x01e\x01@\
+\x01\x04self\xe4\0\0\xc6\0\x04\0![method]incoming-response.headers\x01f\x01@\x01\
+\x04self\xe4\0\0\xc9\0\x04\0![method]incoming-response.consume\x01g\x01h,\x01i\x03\
+\x01j\x01\xe9\0\0\x01@\x01\x04self\xe8\0\0\xea\0\x04\0\x1c[method]incoming-body.\
+stream\x01k\x01i-\x01@\x01\x04this\xc8\0\0\xec\0\x04\0\x1c[static]incoming-body.\
+finish\x01m\x01h-\x01i\x09\x01@\x01\x04self\xee\0\0\xef\0\x04\0![method]future-t\
+railers.subscribe\x01p\x01i$\x01k\xf1\0\x01j\x01\xf2\0\x01\x1b\x01j\x01\xf3\0\0\x01\
+k\xf4\0\x01@\x01\x04self\xee\0\0\xf5\0\x04\0\x1b[method]future-trailers.get\x01v\
+\x01@\x01\x07headers\xc6\0\0\xe1\0\x04\0\x1e[constructor]outgoing-response\x01w\x01\
+h.\x01@\x01\x04self\xf8\0\0*\x04\0%[method]outgoing-response.status-code\x01y\x01\
+@\x02\x04self\xf8\0\x0bstatus-code*\0\xd2\0\x04\0)[method]outgoing-response.set-\
+status-code\x01z\x01@\x01\x04self\xf8\0\0\xc6\0\x04\0![method]outgoing-response.\
+headers\x01{\x01@\x01\x04self\xf8\0\0\xcf\0\x04\0\x1e[method]outgoing-response.b\
+ody\x01|\x01h/\x01i\x05\x01j\x01\xfe\0\0\x01@\x01\x04self\xfd\0\0\xff\0\x04\0\x1b\
+[method]outgoing-body.write\x01\x80\x01\x01j\0\x01\x1b\x01@\x02\x04this\xce\0\x08\
+trailers\xf2\0\0\x81\x01\x04\0\x1c[static]outgoing-body.finish\x01\x82\x01\x01h0\
+\x01@\x01\x04self\x83\x01\0\xef\0\x04\0*[method]future-incoming-response.subscri\
+be\x01\x84\x01\x01i+\x01j\x01\x85\x01\x01\x1b\x01j\x01\x86\x01\0\x01k\x87\x01\x01\
+@\x01\x04self\x83\x01\0\x88\x01\x04\0$[method]future-incoming-response.get\x01\x89\
+\x01\x01h\x07\x01k\x1b\x01@\x01\x03err\x8a\x01\0\x8b\x01\x04\0\x0fhttp-error-cod\
+e\x01\x8c\x01\x03\x01\x15wasi:http/types@0.2.0\x05\x14\x02\x03\0\x09\x10outgoing\
+-request\x02\x03\0\x09\x0frequest-options\x02\x03\0\x09\x18future-incoming-respo\
+nse\x02\x03\0\x09\x0aerror-code\x01B\x0f\x02\x03\x02\x01\x15\x04\0\x10outgoing-r\
+equest\x03\0\0\x02\x03\x02\x01\x16\x04\0\x0frequest-options\x03\0\x02\x02\x03\x02\
+\x01\x17\x04\0\x18future-incoming-response\x03\0\x04\x02\x03\x02\x01\x18\x04\0\x0a\
+error-code\x03\0\x06\x01i\x01\x01i\x03\x01k\x09\x01i\x05\x01j\x01\x0b\x01\x07\x01\
+@\x02\x07request\x08\x07options\x0a\0\x0c\x04\0\x06handle\x01\x0d\x03\x01\x20was\
+i:http/outgoing-handler@0.2.0\x05\x19\x01B\x08\x01p}\x04\0\x0fserialized-json\x03\
+\0\0\x01r\x02\x09timestampw\x07request\x01\x04\0\x10task-queue-input\x03\0\x02\x01\
+s\x04\0\x05error\x03\0\x04\x01j\x01\x01\x01\x05\x04\0\x06output\x03\0\x06\x03\x01\
+\x15lay3r:avs/types@0.3.0\x05\x1a\x02\x03\0\x0b\x10task-queue-input\x03\0\x10tas\
+k-queue-input\x03\0\x1b\x02\x03\0\x0b\x06output\x03\0\x06output\x03\0\x1d\x01@\x01\
+\x07request\x1c\0\x1e\x04\0\x08run-task\x01\x1f\x04\x01#component:isolated-crypt\
+o-demo/demo\x04\0\x0b\x0a\x01\0\x04demo\x03\0\0\0G\x09producers\x01\x0cprocessed\
+-by\x02\x0dwit-component\x070.216.0\x10wit-bindgen-rust\x060.31.0";
 #[inline(never)]
 #[doc(hidden)]
 pub fn __link_custom_section_describing_imports() {

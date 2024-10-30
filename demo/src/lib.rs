@@ -3,7 +3,7 @@ mod bindings;
 
 use layer_wasi::{block_on, Reactor, Request, WasiPollable};
 
-use crate::bindings::mrnerdhair::isolated_crypto::{self, bip39::Mnemonic, secp256k1::EcdsaKey};
+use crate::bindings::component::isolated_crypto::{self, bip39::Mnemonic, secp256k1::EcdsaKey};
 use crate::bindings::{Guest, Output, TaskQueueInput};
 
 use isolated_crypto::bip32::CompressedPoint;
